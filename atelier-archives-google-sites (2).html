@@ -1,0 +1,1095 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L'Atelier des archives</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Caveat:wght@500;600&family=Courier+Prime:wght@400;700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout : bandeau de progression ; dossier d'archives à gauche (document + fiche de catalogue), table de travail à droite ; une colonne sur téléphone. */
+:root{
+  --bg:#e6e9e4;          /* carton d'archives gris-vert */
+  --paper:#fbfaf6;
+  --paper-2:#f1efe7;
+  --ink:#1d2433;         /* encre bleu-noir */
+  --ink-soft:#4f5767;
+  --line:#c9cdc4;
+  --wax:#9b1d2a;         /* cire à cacheter */
+  --wax-hi:#c9384a;
+  --tag:#e9cf7a;         /* étiquette kraft-jaune */
+  --ok:#2f6b47; --ok-bg:#dcebdf;
+  --no:#9b1d2a; --no-bg:#f4dfe0;
+  --f-ui:"Archivo",system-ui,sans-serif;
+  --f-read:"Source Serif 4",Georgia,serif;
+  --f-hand:"Caveat","Segoe Print",cursive;
+  --f-type:"Courier Prime","Courier New",monospace;
+  --f-press:"Old Standard TT",Georgia,serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#151a22;--paper:#22283280;--paper:#232a35;--paper-2:#1c222c;--ink:#e9e6dc;--ink-soft:#a9adb6;--line:#38404d;
+  --wax:#d6505f;--wax-hi:#f07280;--tag:#c9ad57;--ok:#7fc79a;--ok-bg:#1f3428;--no:#f08a95;--no-bg:#3a2226;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#151a22;--paper:#232a35;--paper-2:#1c222c;--ink:#e9e6dc;--ink-soft:#a9adb6;--line:#38404d;
+  --wax:#d6505f;--wax-hi:#f07280;--tag:#c9ad57;--ok:#7fc79a;--ok-bg:#1f3428;--no:#f08a95;--no-bg:#3a2226;color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--wax);outline-offset:2px}
+h1,h2,h3{text-wrap:balance;margin:0}
+
+/* Bandeau */
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-stretch:75%;font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:15px;display:flex;align-items:center;gap:10px}
+.brand i{width:14px;height:14px;border-radius:50%;background:var(--wax);display:inline-block}
+.track{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border:1px solid var(--line);border-radius:3px;color:var(--ink-soft)}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.done{color:var(--ink);border-color:var(--ink-soft)}
+.score{font-variant-numeric:tabular-nums;font-weight:700;font-size:14px}
+.score b{font-size:20px;color:var(--wax)}
+
+/* Accueil */
+.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:start}
+.hero h1{font-stretch:68%;font-weight:800;font-size:clamp(40px,7vw,78px);line-height:.92;text-transform:uppercase;letter-spacing:-.01em}
+.hero h1 span{color:var(--wax)}
+.lead{font-family:var(--f-read);font-size:19px;max-width:58ch;color:var(--ink)}
+.rules{display:grid;gap:10px;margin:0;padding:0;list-style:none;counter-reset:r}
+.rules li{counter-increment:r;display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;font-size:15px}
+.rules li::before{content:counter(r);font-weight:800;font-stretch:75%;font-size:22px;color:var(--wax);line-height:1.1}
+.btn{background:var(--ink);color:var(--bg);border:0;border-radius:4px;padding:12px 22px;font-weight:700;letter-spacing:.03em;font-size:16px}
+.btn:hover{background:var(--wax)}
+.btn[disabled]{opacity:.35;cursor:not-allowed;background:var(--ink)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--bg)}
+.seals-demo{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+details.prof{background:var(--paper-2);border:1px solid var(--line);border-radius:6px;padding:14px 18px}
+details.prof summary{cursor:pointer;font-weight:700;font-size:14px;letter-spacing:.04em;text-transform:uppercase}
+.prof table{border-collapse:collapse;width:100%;font-size:14px;margin-top:10px;font-variant-numeric:tabular-nums}
+.prof td{border-top:1px solid var(--line);padding:6px 8px 6px 0;vertical-align:top}
+.prof td:first-child{white-space:nowrap;font-weight:700;width:90px}
+.prof p,.prof ul{font-size:14px;max-width:70ch}
+.tablewrap{overflow-x:auto}
+
+/* Plan de travail */
+.desk{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start}
+.docs{display:grid;gap:18px}
+.sheet{background:var(--paper);border:1px solid var(--line);box-shadow:0 1px 0 var(--line),0 10px 24px -18px #0006;position:relative}
+.sheet .cote{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink-soft);padding:10px 18px;border-bottom:1px dashed var(--line)}
+.text{padding:22px 26px 26px;white-space:pre-line;min-width:0}
+.text.hand{font-family:var(--f-hand);font-size:25px;line-height:1.35}
+.text.type{font-family:var(--f-type);font-size:15.5px;line-height:1.6}
+.text.press{font-family:var(--f-press);font-size:17px;line-height:1.55;column-gap:28px}
+.text.press .head{display:block;font-weight:700;font-size:30px;line-height:1.05;text-align:center;border-bottom:3px double var(--ink);padding-bottom:8px;margin-bottom:12px;letter-spacing:.02em}
+/* documents iconographiques */
+.fig{margin:0;padding:18px 18px 14px;display:grid;gap:10px}
+.fig svg{display:block;width:100%;height:auto;max-width:100%;border:1px solid var(--line)}
+.fig.poster svg{max-width:330px;margin:0 auto;box-shadow:0 8px 20px -14px #0008}
+.fig figcaption{font-family:var(--f-read);font-size:14.5px;line-height:1.45;color:var(--ink-soft)}
+.fig img{display:block;width:100%;height:auto;border:1px solid var(--line);background:#111}
+.fig.poster img{max-width:360px;margin:0 auto}
+.fig .credit{display:block;margin-top:6px;font-family:var(--f-ui);font-size:11.5px;color:var(--ink-soft)}
+.fig figcaption b{font-family:var(--f-ui);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);margin-right:6px}
+.kind{display:inline-block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;padding:2px 8px;border-radius:3px;background:var(--tag);color:#1d2433}
+.routes{display:flex;gap:12px;flex-wrap:wrap}
+.route{text-align:left;background:var(--paper);border:1.5px solid var(--line);border-radius:6px;padding:14px 16px;display:grid;gap:4px;max-width:280px}
+.route:hover{border-color:var(--ink)}
+.route b{font-size:17px}
+.route span{font-size:13.5px;color:var(--ink-soft)}
+.route.main{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.route.main span{color:var(--bg);opacity:.8}
+.route.main:hover{background:var(--wax);border-color:var(--wax)}
+/* faux post */
+.post{margin:20px;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--paper);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;display:grid;gap:10px}
+.post-h{display:flex;gap:10px;align-items:center}
+.post-h b{display:block;font-size:15px}.post-h small{color:var(--ink-soft);font-size:13px}
+.ava{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;background:linear-gradient(135deg,#c9a43a,#9b1d2a)}
+.tick{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:#1d9bf0;color:#fff;font-size:10px;vertical-align:1px}
+.post p{margin:0;font-size:17px;line-height:1.45}
+.post-s{color:var(--ink-soft);font-size:13px;border-top:1px solid var(--line);padding-top:8px}
+/* niveaux */
+.rank{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;padding:4px 12px 4px 4px;border:1.5px solid var(--ink);border-radius:999px}
+.rank .lv{width:24px;height:24px;border-radius:50%;background:var(--wax);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800}
+.levelup{border:2px dashed var(--wax);padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;background:color-mix(in srgb,var(--wax) 8%,var(--paper))}
+.stamp{font-stretch:70%;font-weight:800;text-transform:uppercase;color:var(--wax);border:3px solid var(--wax);padding:4px 8px;transform:rotate(-8deg);font-size:14px;letter-spacing:.06em;animation:stamp .5s cubic-bezier(.3,1.6,.6,1)}
+@keyframes stamp{from{transform:rotate(-8deg) scale(2.4);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
+.levelup b{display:block;font-size:17px}
+.levelup span{font-size:14px;color:var(--ink-soft)}
+.streak{font-size:13px;font-weight:700;color:var(--ok)}
+.ladder{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.ladder li{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;font-size:14px}
+.ladder li .lv{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--wax);color:var(--wax);display:grid;place-items:center;font-size:12px;font-weight:800}
+.ladder li.got .lv{background:var(--wax);color:#fff}
+.ladder li small{color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.bigrank{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.bigrank .stamp{font-size:clamp(20px,4vw,30px);padding:8px 14px;border-width:4px}
+/* fiche catalogue */
+.card{border-top:1px solid var(--line);background:var(--paper-2);display:grid;grid-template-columns:1fr 1fr}
+.field{padding:10px 18px;border-top:1px solid var(--line);min-width:0}
+.field:nth-child(odd){border-right:1px solid var(--line)}
+.field:nth-child(-n+2){border-top:0}
+.field small{display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:var(--ink-soft)}
+.field p{margin:2px 0 0;font-family:var(--f-read);font-size:14.5px;line-height:1.4}
+.field .blank{display:block;height:12px;margin-top:6px;border-radius:2px;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 10px);opacity:.8}
+.field.fresh p{animation:ink .7s ease-out}
+@keyframes ink{from{opacity:0;filter:blur(3px)}to{opacity:1;filter:none}}
+
+/* Panneau */
+.panel{background:var(--paper);border:1px solid var(--line);padding:22px;display:flex;flex-direction:column;gap:16px;position:sticky;top:12px}
+.step{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--wax)}
+.panel h2{font-stretch:80%;font-weight:800;font-size:26px;line-height:1.1}
+.panel p.help{margin:0;color:var(--ink-soft);font-size:15px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;background:transparent;border:1.5px solid var(--line);border-radius:5px;padding:11px 13px;font-size:15px;line-height:1.4;display:grid;grid-template-columns:24px 1fr;gap:8px}
+.opt .l{font-weight:800;color:var(--ink-soft)}
+.opt:hover{border-color:var(--ink)}
+.opt.sel{border-color:var(--ink);background:var(--paper-2)}
+.opt.good{border-color:var(--ok);background:var(--ok-bg)}
+.opt.bad{border-color:var(--no);background:var(--no-bg)}
+.opt.was::after{content:"Ta 1re impression";grid-column:2;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--ink-soft)}
+.opt[disabled]{cursor:default}
+
+/* Sceaux */
+.seals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.seal{background:transparent;border:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:6px}
+.wax{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;position:relative;
+  background:radial-gradient(circle at 35% 30%,var(--wax-hi),var(--wax) 55%,color-mix(in srgb,var(--wax) 70%,#000) 100%);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--wax) 35%,transparent),inset 0 -3px 6px #0004;color:#fff;font-weight:800;font-stretch:70%;font-size:26px;transition:transform .15s}
+.seal:hover .wax{transform:rotate(-8deg) scale(1.05)}
+.seal span.n{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.seal.open .wax{background:transparent;box-shadow:inset 0 0 0 2px var(--line);color:var(--ink-soft);animation:crack .45s ease-out}
+.seal.open .wax::after{content:"✓";font-size:22px;color:var(--ok)}
+.seal.open .wax b{display:none}
+@keyframes crack{0%{transform:scale(1)}40%{transform:scale(1.2) rotate(12deg);box-shadow:0 0 0 10px color-mix(in srgb,var(--wax) 25%,transparent)}100%{transform:scale(1)}}
+
+.verdict{border-left:4px solid var(--ink);padding:4px 0 4px 14px;font-family:var(--f-read);font-size:15.5px}
+.verdict.ok{border-color:var(--ok)}.verdict.ko{border-color:var(--no)}
+.verdict h3{font-family:var(--f-ui);font-size:15px;font-weight:800;margin-bottom:4px}
+.verdict p{margin:0 0 8px}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ba div{background:var(--paper-2);border:1px solid var(--line);padding:10px 12px;font-size:14px;font-family:var(--f-read)}
+.ba small{display:block;font-family:var(--f-ui);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:10.5px;color:var(--ink-soft);margin-bottom:3px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.pts{font-weight:800;color:var(--wax);font-variant-numeric:tabular-nums}
+
+/* Bilan */
+.final{display:grid;gap:22px}
+.final h1{font-stretch:68%;font-weight:800;font-size:clamp(36px,6vw,64px);text-transform:uppercase;line-height:.95}
+.stats{display:flex;gap:28px;flex-wrap:wrap}
+.stat b{display:block;font-stretch:70%;font-weight:800;font-size:48px;line-height:1;color:var(--wax);font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.method{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.mcard{background:var(--paper);border:1px solid var(--line);padding:16px 18px;display:grid;grid-template-columns:52px 1fr;gap:12px}
+.mcard .wax{width:44px;height:44px;font-size:19px;box-shadow:none}
+.mcard h3{font-size:16px;font-weight:800}
+.mcard p{margin:4px 0 0;font-family:var(--f-read);font-size:15px}
+.moral{font-family:var(--f-read);font-size:20px;max-width:60ch;border-top:2px solid var(--ink);padding-top:14px}
+.note{font-size:12.5px;color:var(--ink-soft);max-width:80ch}
+
+@media (max-width:820px){
+  .hero,.desk{grid-template-columns:1fr}
+  .panel{position:static}
+  .method{grid-template-columns:1fr}
+}
+@media (max-width:480px){
+  .card{grid-template-columns:1fr}
+  .field:nth-child(odd){border-right:0}
+  .field:nth-child(2){border-top:1px solid var(--line)}
+  .text{padding:18px}
+  .text.hand{font-size:22px}
+  .wax{width:52px;height:52px;font-size:22px}
+  .ba{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+const TAGS = {
+  nature:{l:"N",nom:"Nature",q:"Qu'est-ce que c'est ?"},
+  auteur:{l:"A",nom:"Auteur",q:"Qui l'a produit ?"},
+  contexte:{l:"C",nom:"Contexte",q:"Quand, où ?"},
+  destinataire:{l:"D",nom:"Destinataire",q:"Pour qui ?"}
+};
+const ORDER = ["nature","auteur","contexte","destinataire"];
+
+/*IMG*/const IMG={photo:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/2-8-14%2C_mobilisation%2C_le_premier_d%C3%A9part%2C_gare_de_l%27Est_-_btv1b69310801.jpg/960px-2-8-14%2C_mobilisation%2C_le_premier_d%C3%A9part%2C_gare_de_l%27Est_-_btv1b69310801.jpg",caricature:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/A_faut_esperer_q%27eu_se_jeu_la_Finira_bentot_sic%2C_G.23829.jpg/960px-A_faut_esperer_q%27eu_se_jeu_la_Finira_bentot_sic%2C_G.23829.jpg",monument:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Verdun-sur-Garonne_-_Monument_aux_Morts.jpg/960px-Verdun-sur-Garonne_-_Monument_aux_Morts.jpg",vichy:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Imagerie_de_la_R%C3%A9volution_nationale.jpg/960px-Imagerie_de_la_R%C3%A9volution_nationale.jpg",liberte:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Eug%C3%A8ne_Delacroix_-_La_libert%C3%A9_guidant_le_peuple-2.jpg/960px-Eug%C3%A8ne_Delacroix_-_La_libert%C3%A9_guidant_le_peuple-2.jpg",louis14:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Rigaud_Louis_XIV_1701.jpg/960px-Rigaud_Louis_XIV_1701.jpg",mur:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/DF-ST-91-01459_East_German_policemen_look_over_into_West_Germany_as_they_stand_near_the_Brandenburg_Gate.jpeg/960px-DF-ST-91-01459_East_German_policemen_look_over_into_West_Germany_as_they_stand_near_the_Brandenburg_Gate.jpeg"};/*/IMG*/
+/* ---------- dossiers ---------- */
+const CASES = [
+{
+  id:"lettre", titre:"La lettre du front", theme:"Première Guerre mondiale", kind:"Texte",
+  docs:[{style:"hand", cote:"Lettre manuscrite",
+    texte:`Ma chère maman,
+
+Ne te fais pas de souci pour moi. Ici tout va bien : on mange à notre faim, le cuistot nous gâte et on dort au sec dans un bon abri. Les copains sont gais et le moral est excellent. Les Boches n'osent plus bouger.
+
+Embrasse bien papa et la petite Jeanne.
+Ton fils qui t'aime,
+Louis`,
+    tags:{
+      nature:"Lettre privée envoyée en franchise militaire.",
+      auteur:"Louis M., 22 ans, soldat d'infanterie, fils d'agriculteurs de la Sarthe.",
+      contexte:"Mars 1916, secteur de Verdun, en pleine bataille (février–décembre 1916).",
+      destinataire:"Sa mère, restée à la ferme. Le courrier des soldats peut être ouvert par le contrôle postal de l'armée."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"La lettre montre que, malgré la guerre, les soldats du front étaient bien nourris, logés à l'abri et gardaient le moral.",
+    b:"Louis veut surtout rassurer sa mère : la lettre éclaire ses liens familiaux et l'autocensure plus que la vie réelle au front.",
+    c:"Écrite au cœur des combats, la lettre prouve que l'armée française dominait alors l'ennemi.",
+    d:"Le soldat ment sur ses conditions de vie : la lettre est inutilisable et l'historien doit l'écarter."
+  },
+  correct:"b", key:"destinataire",
+  avant:"Lu seul, le texte semble décrire une vie de soldat plutôt confortable.",
+  apres:"Une lettre à sa mère, écrite à Verdun et lisible par la censure : Louis embellit pour ne pas l'inquiéter et pour ne pas être sanctionné.",
+  expl:"Le destinataire explique pourquoi Louis embellit : on ne raconte pas l'horreur à sa mère. Le contexte (Verdun, 1916) rend ce tableau très peu crédible, et le contrôle postal pousse à l'autocensure. Un document « qui ment » reste précieux : il montre comment les soldats protégeaient leurs proches."
+},
+{
+  id:"gare1914", titre:"Le quai de la gare", theme:"Entrée en guerre, 1914", kind:"Photographie",
+  docs:[{style:"img", src:"photo", cote:"Négatif sur plaque de verre", credit:"Agence Rol, 2 août 1914. BnF, Gallica, via Wikimedia Commons. Domaine public.",
+    legende:"Un train de voyageurs quitte la gare. Aux fenêtres, des hommes se penchent et agitent les bras ; sur le quai, une femme leur fait de grands signes.",
+    tags:{
+      nature:"Photographie de presse, destinée à être vendue aux journaux illustrés.",
+      auteur:"Un photographe de l'Agence Rol, agence photographique parisienne.",
+      contexte:"2 août 1914, premier jour de la mobilisation générale, gare de l'Est à Paris. Dans les campagnes, où vit alors la majorité des Français, les historiennes et historiens ont montré que la nouvelle a surtout provoqué stupeur et résignation.",
+      destinataire:"Les lectrices et lecteurs du journal, dans un pays qui entre en guerre. La censure de la presse se met en place dès le mois d'août."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"La photo prouve qu'en août 1914, partout en France, les hommes partent à la guerre dans l'enthousiasme, soutenus par une population unanime.",
+    b:"Elle saisit un vrai moment de joie dans une gare parisienne, sans nous dire ce que pensait au même moment le reste du pays.",
+    c:"Une scène aussi joyeuse au début d'une guerre terrible est forcément une mise en scène : la photo est truquée.",
+    d:"Les visages joyeux montrent que les mobilisés savaient que la guerre serait longue, mais l'acceptaient."
+  },
+  correct:"b", key:"contexte",
+  avant:"Vue seule, l'image semble montrer des hommes qui partent à la guerre avec joie, salués par la foule.",
+  apres:"C'est une gare parisienne, le premier jour : une scène réelle, mais une seule scène, dans une seule ville.",
+  expl:"Cette photo est authentique : la scène a bien eu lieu. Mais le contexte rappelle ce qu'elle ne montre pas : le reste du pays, où dominent la consternation et l'acceptation résignée. Le photographe a aussi choisi son cadrage, et le journal choisit ce qu'il publie. Une image montre un moment et un lieu, pas une opinion générale."
+},
+{
+  id:"patron", titre:"Le patron et les enfants", theme:"Industrialisation, XIXe siècle", kind:"Texte",
+  docs:[{style:"type", cote:"Lettre dactylographiée (copie)",
+    texte:`Monsieur le Président,
+
+Les enfants employés dans mon établissement y sont mieux qu'ailleurs. Leur travail est léger : ils rattachent les fils cassés et balaient les ateliers. Une journée de treize heures n'a rien d'excessif ; elle leur évite l'oisiveté et le vagabondage, et leur salaire aide leurs parents.
+
+Une loi qui fixerait un âge minimum ou une durée de travail ruinerait notre industrie face à la concurrence anglaise et plongerait ces familles dans la misère.`,
+    tags:{
+      nature:"Réponse écrite à une enquête officielle sur le travail des enfants dans les manufactures.",
+      auteur:"Propriétaire d'une filature de coton à Lille, qui emploie 300 ouvrières et ouvriers dont 80 enfants.",
+      contexte:"Fin des années 1830, pendant les débats qui aboutissent à la loi du 22 mars 1841, première loi française qui limite le travail des enfants.",
+      destinataire:"La commission chargée de préparer cette loi."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"Décrit par celui qui connaît le mieux l'atelier, le travail des enfants y était léger et utile aux familles.",
+    b:"C'est le plaidoyer d'un patron contre une loi : utile pour connaître ses arguments, pas la vie des enfants.",
+    c:"Le texte prouve que les familles ouvrières préféraient envoyer leurs enfants à l'usine plutôt qu'à l'école du village.",
+    d:"L'auteur défend ses intérêts : son texte n'a aucune valeur."
+  },
+  correct:"b", key:"auteur",
+  avant:"Lu seul, le texte décrit un travail d'enfant « léger » et utile aux familles.",
+  apres:"C'est un patron qui emploie 80 enfants et qui risque de perdre cette main-d'œuvre bon marché si la loi passe.",
+  expl:"L'auteur a un intérêt direct à ce que rien ne change : il minimise (« léger », « treize heures n'a rien d'excessif ») et agite la menace de la ruine. Son texte ne prouve pas que les enfants allaient bien, mais il est très utile pour comprendre les résistances patronales à la loi de 1841."
+},
+{
+  id:"caricature", titre:"Le dos du peuple", theme:"Révolution française, 1789", kind:"Caricature",
+  docs:[{style:"img", poster:true, src:"caricature", cote:"Estampe coloriée", credit:"Anonyme, 1789. Musée Carnavalet – Histoire de Paris (Paris Musées), CC0.",
+    legende:"Un vieux paysan courbé, appuyé sur un bâton, porte sur son dos un abbé et un noble à l'épée et au chapeau à plumes. À ses pieds, lapins et oiseaux mangent ses récoltes. Légende : « A faut espérer q'eu se jeu là finira bentôt » (il faut espérer que ce jeu-là finira bientôt).",
+    tags:{
+      nature:"Caricature : estampe satirique coloriée à la main, vendue en feuille volante.",
+      auteur:"Anonyme. Comme beaucoup de graveurs de l'époque, l'auteur ne signe pas, mais prend clairement le parti du tiers état.",
+      contexte:"Été 1789. Les États généraux se sont réunis en mai ; le tiers état réclame l'égalité devant l'impôt. Les privilèges sont abolis dans la nuit du 4 août.",
+      destinataire:"Le public des villes, à Paris surtout. Une image se comprend même sans savoir lire."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"L'image montre une scène courante à la fin de l'Ancien Régime : les paysans devaient porter nobles et prêtres sur leur dos lors de leurs déplacements.",
+    b:"C'est une satire des privilèges : elle montre les idées de partisans du tiers état en 1789, pas une scène réelle.",
+    c:"On y voit que les nobles et le clergé payaient la plus grande partie des impôts du royaume.",
+    d:"Une caricature exagère toujours : elle n'a aucune valeur pour comprendre la société ou les idées de 1789."
+  },
+  correct:"b", key:"nature",
+  avant:"Vue seule, l'image pourrait passer pour une scène de la vie paysanne en 1789.",
+  apres:"C'est une caricature : elle exagère volontairement pour faire passer un message politique.",
+  expl:"La nature du document change la façon de le lire : une caricature ne montre pas ce qui s'est passé, elle montre ce que l'on pense. Le poids sur le dos du paysan figure les impôts et les droits (taille, dîme, droits seigneuriaux) payés par le tiers état, dont noblesse et clergé étaient en partie exemptés. Les lapins et les oiseaux rappellent le droit de chasse et les colombiers réservés aux seigneurs. La légende imite le parler paysan. C'est une très bonne source sur l'opinion de 1789."
+},
+{
+  id:"munich", titre:"Le journal de l'institutrice", theme:"Marche à la Seconde Guerre mondiale", kind:"Texte",
+  docs:[{style:"hand", cote:"Carnet manuscrit",
+    texte:`Vendredi.
+Quel soulagement ! Les accords sont signés, la paix est sauvée. Ce soir, dans les rues, des gens qui ne se connaissaient pas s'embrassaient.
+
+J'ai pensé à mon frère, tombé en 1916 : ses enfants ne connaîtront pas cela. Nos dirigeants ont été sages. La guerre n'aura pas lieu.
+
+Je vais enfin pouvoir dormir.`,
+    tags:{
+      nature:"Journal intime : écrit pour soi, sans projet d'être lu.",
+      auteur:"Une institutrice parisienne de 41 ans dont le frère a été tué pendant la Grande Guerre.",
+      contexte:"30 septembre 1938, au lendemain des accords de Munich : la France et le Royaume-Uni laissent l'Allemagne d'Hitler annexer les Sudètes. Onze mois plus tard, le 1er septembre 1939, l'Allemagne envahit la Pologne.",
+      destinataire:"Personne d'autre qu'elle-même."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"Ce témoignage montre qu'à la fin des années 1930, les dirigeants européens ont réussi à sauver durablement la paix.",
+    b:"Elle témoigne sincèrement du soulagement d'une partie des Français après Munich, un espoir que la guerre de 1939 va démentir.",
+    c:"L'autrice cherche à convaincre ses lecteurs que la guerre est devenue impossible.",
+    d:"La guerre ayant finalement eu lieu, ce texte qui se trompe sur l'avenir ne peut rien nous apprendre."
+  },
+  correct:"b", key:"contexte",
+  avant:"Lu seul, le texte annonce une paix retrouvée. Mais quels accords, quelle année ?",
+  apres:"Nous sommes au lendemain de Munich, et nous savons ce que l'autrice ignore : la guerre éclate moins d'un an plus tard.",
+  expl:"Sans date, impossible de comprendre de quels accords il s'agit. Le contexte transforme une bonne nouvelle en illusion tragique. Ici la nature joue dans l'autre sens : un journal intime n'a personne à convaincre, c'est donc une source fiable sur ce que ressentait l'autrice, même si elle se trompait sur l'avenir."
+},
+{
+  id:"magnito", titre:"La ville de l'acier", theme:"URSS stalinienne", kind:"Article de presse",
+  docs:[{style:"press", cote:"Coupure de presse", head:"MAGNITOGORSK EN FÊTE !",
+    texte:`Un nouveau haut fourneau vient d'être allumé dans la ville de l'acier, sortie de la steppe en moins de trois ans. Les brigades de choc ont dépassé les objectifs du plan.
+
+Partout dans le pays, ouvrières et ouvriers, kolkhoziennes et kolkhoziens, unis derrière le Parti et le camarade Staline, construisent dans la joie l'avenir radieux du socialisme. Jamais la vie n'a été aussi belle pour le peuple soviétique !`,
+    tags:{
+      nature:"Article d'un quotidien officiel. En URSS, toute la presse est contrôlée par le Parti communiste et soumise à la censure.",
+      auteur:"La rédaction du journal, organe du Parti.",
+      contexte:"Printemps 1933, fin du premier plan quinquennal. Au même moment, une famine fait des millions de morts, en Ukraine notamment. La presse n'en parle jamais.",
+      destinataire:"Le grand public soviétique, dans toute l'URSS."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"L'article montre qu'en 1933, grâce au plan quinquennal, les Soviétiques vivaient dans la prospérité et l'enthousiasme.",
+    b:"C'est de la propagande : il montre l'image que le régime veut donner, pas la vie réelle des Soviétiques.",
+    c:"Trop enthousiaste pour être vrai, le texte prouve que l'industrie soviétique n'a fait aucun progrès.",
+    d:"Publié dans un grand quotidien, l'article montre que la presse soviétique informait librement sur le pays."
+  },
+  correct:"b", key:"nature",
+  avant:"Lu seul, le texte décrit un pays en plein essor, heureux et uni.",
+  apres:"C'est un article de presse officielle sous censure, publié pendant une famine qu'il passe sous silence.",
+  expl:"La nature du document change tout : dans une presse contrôlée par le Parti, un article n'informe pas, il fait de la propagande. Le contexte (la famine de 1932-1933) montre l'écart avec la réalité. Le document reste une excellente source pour étudier le discours du régime."
+},
+{
+  id:"vichy", titre:"Travail, Famille, Patrie", theme:"La France de Vichy", kind:"Image de propagande",
+  docs:[{style:"img", poster:true, src:"vichy", cote:"Imagerie en couleurs", credit:"Anonyme, 1942, « Imagerie de la Révolution nationale ». Wikimedia Commons, domaine public.",
+    legende:"Au centre, le portrait d'un vieux maréchal entouré de drapeaux tricolores, sous la devise « Travail, Famille, Patrie ». En bas, un paysan et ses bœufs devant le clocher du village, un forgeron au travail devant les usines, et au milieu une mère assise avec ses enfants, un berceau et un coq.",
+    tags:{
+      nature:"Image de propagande imprimée en couleurs, dans le style des images populaires, largement diffusée.",
+      auteur:"Anonyme, réalisée pour la propagande du régime de Vichy dirigé par le maréchal Pétain. Sa « Révolution nationale » veut que les femmes se consacrent avant tout à la maternité.",
+      contexte:"1942, France occupée. Environ un million de prisonniers de guerre français sont retenus en Allemagne : beaucoup de femmes travaillent et font vivre seules leur famille.",
+      destinataire:"Les Françaises, et plus largement toute la population."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"L'image montre fidèlement la répartition des rôles sous l'Occupation : les hommes travaillaient aux champs et à l'usine, tandis que les femmes restaient au foyer.",
+    b:"Elle montre le rôle que Vichy veut assigner aux femmes, pas la vie réelle des Françaises, dont beaucoup travaillent.",
+    c:"Une femme au cœur de l'image : la preuve qu'en 1942 les Françaises avaient le droit de vote.",
+    d:"Les visages paisibles des personnages montrent que les familles françaises vivaient heureuses pendant la guerre."
+  },
+  correct:"b", key:"auteur",
+  avant:"Vue seule, l'image montre une France harmonieuse où chacun est à sa place : les hommes au travail, la mère avec les enfants.",
+  apres:"Elle est produite par un régime autoritaire qui veut renvoyer les femmes au foyer, au moment même où beaucoup doivent travailler.",
+  expl:"L'auteur révèle l'intention : Vichy diffuse un modèle de société, avec le maréchal au centre comme une icône, et un modèle de femme, mère et épouse, qui sert son projet politique. L'affiche ne décrit pas la vie des Françaises, elle dit ce que le régime attend d'elles. Le contexte montre l'écart : avec les hommes prisonniers, les femmes tiennent les fermes, les commerces et les ateliers. (Les Françaises n'obtiennent le droit de vote qu'en 1944.)"
+},
+{
+  id:"monument", titre:"Le soldat de bronze", theme:"Mémoire de la Grande Guerre", kind:"Statue",
+  docs:[{style:"img", src:"monument", cote:"Monument aux morts, Verdun-sur-Garonne", credit:"Photo Archaeodontosaurus, 2016, Wikimedia Commons, CC BY-SA 4.0.",
+    legende:"Sur une place de Verdun-sur-Garonne, petite ville proche de Toulouse, un soldat de bronze casqué serre son fusil, le regard droit devant lui. Autour, des plaques portent de longues listes de noms, avec des années de 1914 à 1918.",
+    tags:{
+      nature:"Monument aux morts : une statue commémorative, pas une représentation des combats. Les plaques portent les noms des hommes de la commune morts pendant la guerre.",
+      auteur:"La municipalité, qui commande le monument, souvent financé en partie par une souscription des habitants. Beaucoup de statues sont des modèles vendus sur catalogue par des fonderies.",
+      contexte:"Après 1918, presque toutes les communes françaises érigent un monument aux morts, la plupart entre 1919 et 1925. Les combats n'ont jamais atteint cette région du Sud-Ouest.",
+      destinataire:"Les habitantes et les habitants, d'abord les familles endeuillées, réunies devant lui lors des cérémonies du 11 Novembre."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"La statue montre fidèlement l'allure des soldats de 1914-1918 : propres, vigoureux, déterminés et fiers dans des uniformes impeccables, comme dans les tranchées.",
+    b:"Il montre comment une commune a voulu honorer ses morts : c'est une source sur la mémoire de la guerre, pas sur les combats.",
+    c:"Le nom de la ville l'indique : le monument commémore la bataille de 1916 qui s'y est déroulée.",
+    d:"Une statue est une œuvre d'art, pas un texte : elle ne peut pas servir de source."
+  },
+  correct:"b", key:"nature",
+  avant:"Vue seule, la statue semble montrer un soldat solide et héroïque, et le nom de la ville évoque une grande bataille.",
+  apres:"C'est un monument aux morts : il ne raconte pas la guerre, il organise le souvenir et le deuil d'une commune.",
+  expl:"Identifier la nature de l'objet évite le contresens : une statue commémorative idéalise. Ce soldat propre et déterminé dit l'héroïsme et la reconnaissance, pas la boue des tranchées. Attention aussi au piège du nom : Verdun-sur-Garonne est loin du front, ce n'est pas Verdun (Meuse). Les listes de noms, elles, sont une donnée précise : des dizaines de morts pour une petite ville disent l'ampleur du massacre. Le monument est une excellente source sur la mémoire et le deuil après 1918."
+},
+{
+  id:"petition", titre:"Les femmes écrivent au roi", theme:"Révolution française, 1789", kind:"Texte",
+  docs:[{style:"type", cote:"Pétition imprimée (extrait adapté)",
+    texte:`Sire,
+
+Nous ne demandons pas à siéger aux États généraux ; nous savons que la faveur ne doit pas l'emporter sur la raison.
+
+Nous supplions seulement Votre Majesté de nous accorder un peu d'instruction, afin que nous puissions gagner honnêtement notre vie, et de réserver aux femmes les métiers de couturière, de brodeuse et de marchande de modes, que des hommes viennent nous ravir.
+
+Nous sommes, Sire, avec le plus profond respect, vos très humbles et très fidèles sujettes.`,
+    tags:{
+      nature:"Pétition imprimée et diffusée en brochure.",
+      auteur:"Des femmes du tiers état, anonymes, sans doute issues des métiers de la couture et du commerce parisiens.",
+      contexte:"1er janvier 1789, quelques mois avant la réunion des États généraux. Les femmes du tiers état n'y ont aucune représentante.",
+      destinataire:"Le roi Louis XVI, souverain absolu, à qui l'on s'adresse en « très humbles sujettes »."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"Le texte montre qu'en 1789, les femmes ne souhaitaient aucun droit politique : elles se contentaient d'un peu d'instruction et de la protection de leurs métiers.",
+    b:"Face au roi, ces femmes demandent avec prudence : le texte montre ce qu'elles osent dire, pas tout ce qu'elles veulent.",
+    c:"Sensible à ces demandes, Louis XVI accorde le droit de vote aux femmes en 1789.",
+    d:"Écrit par des autrices anonymes dont on ignore tout, ce texte ne peut pas être utilisé par l'historien."
+  },
+  correct:"b", key:"destinataire",
+  avant:"Lu seul, le texte semble dire que les femmes se contentent de peu et renoncent à la politique.",
+  apres:"On écrit au roi absolu : il faut le flatter, se montrer modeste et ne demander que ce qu'il peut accorder.",
+  expl:"Le destinataire impose le ton : face au roi, on supplie, on se dit « très humbles sujettes », on écarte d'avance toute demande jugée trop audacieuse. La retenue du texte est une stratégie. Deux ans plus tard, quand le contexte a changé, Olympe de Gouges publie la Déclaration des droits de la femme et de la citoyenne (1791), qui réclame l'égalité complète."
+},
+{
+  id:"tract", titre:"Le laissez-passer", theme:"Seconde Guerre mondiale, 1944", kind:"Tract",
+  docs:[{style:"press", cote:"Tract largué par avion (traduction)", head:"LAISSEZ-PASSER",
+    texte:`Soldats allemands !
+
+La guerre est perdue pour l'Allemagne. Vos chefs le savent.
+
+Des milliers de vos camarades sont déjà prisonniers. Ils sont bien nourris, logés au chaud, soignés par nos médecins. Après la guerre, ils rentreront chez eux.
+
+Pour sauver votre vie, venez vers nos lignes, les mains levées, et présentez ce papier.`,
+    tags:{
+      nature:"Tract imprimé en allemand, largué par avion au-dessus des lignes ennemies. Il sert aussi de laissez-passer.",
+      auteur:"Les services de guerre psychologique des armées alliées.",
+      contexte:"Été 1944, après le débarquement de Normandie du 6 juin.",
+      destinataire:"Les soldats allemands du front, que les Alliés veulent pousser à se rendre."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"Le tract montre que les prisonniers allemands étaient bien nourris, logés au chaud et soignés par les Alliés.",
+    b:"Il cherche à pousser des soldats ennemis à se rendre : c'est une source sur la guerre psychologique, pas sur les prisonniers.",
+    c:"Le texte montre qu'en 1944, les soldats allemands étaient tous prêts à se rendre.",
+    d:"Ce texte de propagande n'est qu'un mensonge : il ne peut rien apprendre à l'historien sur la guerre."
+  },
+  correct:"b", key:"destinataire",
+  avant:"Lu seul, le texte semble décrire la vie agréable des prisonniers de guerre.",
+  apres:"Il s'adresse à des soldats ennemis qu'il faut décider à poser les armes : tout est écrit pour les rassurer.",
+  expl:"Tout le texte est construit pour son destinataire : un soldat qui a peur de mourir ou d'être maltraité s'il se rend. On lui promet donc nourriture, chaleur et retour au pays. Cela ne dit pas comment les prisonniers étaient vraiment traités, mais cela montre que la propagande est aussi une arme de guerre."
+},
+{
+  id:"pub", titre:"Madame, la lessive est finie", theme:"Les Trente Glorieuses", kind:"Publicité",
+  docs:[{style:"press", cote:"Page de magazine", head:"LUNDI, JOUR DE REPOS !",
+    texte:`Madame, la lessive du lundi n'est plus une corvée. Pendant que votre machine lave, rince et essore, vous vous occupez de vos enfants… ou de vous !
+
+Un linge éclatant, des mains douces, un foyer heureux : votre mari sera fier de vous.
+
+Monsieur, pour la fête des Mères, offrez-lui ce qu'elle mérite : la liberté. Facilités de paiement en 12 mois.`,
+    tags:{
+      nature:"Publicité (on disait « réclame ») parue dans un magazine.",
+      auteur:"Une agence de publicité, payée par un fabricant de machines à laver.",
+      contexte:"1955, début des Trente Glorieuses. L'électroménager se diffuse, mais seule une minorité de foyers possède un lave-linge.",
+      destinataire:"Les lectrices, présentées comme des femmes au foyer, et leurs maris : jusqu'en 1965, une femme mariée ne peut ni ouvrir un compte bancaire ni travailler sans l'accord de son époux."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"La publicité montre qu'en 1955, grâce au progrès technique et aux facilités de paiement, la plupart des familles françaises possédaient déjà un lave-linge.",
+    b:"Elle vise les épouses et les maris qui paient : elle révèle les rôles de genre et les rêves de confort de l'époque.",
+    c:"Elle s'adresse aussi à « Monsieur » : dans les années 1950, les hommes faisaient donc la lessive.",
+    d:"Une publicité cherche seulement à vendre : elle ne peut rien apprendre à l'historien sur la société de son temps."
+  },
+  correct:"b", key:"destinataire",
+  avant:"Lu seul, le texte semble décrire une époque où toutes les femmes profitent d'une machine.",
+  apres:"Le message vise deux personnes : l'épouse qui fait la lessive et le mari qui décide de l'achat.",
+  expl:"Regarder à qui parle la publicité révèle toute une société : la lessive est le travail de « Madame », l'achat est l'affaire de « Monsieur », et la « liberté » de la femme est un cadeau offert par son mari. L'annonce ne mesure pas l'équipement des foyers ; elle montre les rôles de genre et les désirs de consommation de son temps."
+},
+{
+  id:"vote1945", titre:"Le premier bulletin", theme:"Les femmes et le vote, 1945", kind:"Texte",
+  docs:[{style:"hand", cote:"Carnet manuscrit",
+    texte:`Dimanche.
+Ce matin, j'ai glissé mon bulletin dans l'urne. Mes mains tremblaient comme celles d'une écolière.
+
+Maman est venue avec moi. Elle a soixante-dix ans ; elle a dit en sortant : « J'ai attendu toute ma vie. »
+
+Le monsieur du bureau nous a regardées de travers. Tant pis pour lui.`,
+    tags:{
+      nature:"Journal intime : écrit pour soi, sans projet d'être lu.",
+      auteur:"Une employée des Postes de Lyon, 34 ans.",
+      contexte:"29 avril 1945, élections municipales : pour la première fois, les Françaises votent. Le droit de vote leur a été accordé par l'ordonnance du 21 avril 1944. La guerre n'est pas encore finie en Europe.",
+      destinataire:"Personne d'autre qu'elle-même."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"L'autrice raconte un vote ordinaire, comme elle en fait régulièrement depuis qu'elle est adulte.",
+    b:"Le texte dit l'émotion de femmes qui votent pour la première fois : les Françaises viennent tout juste d'obtenir ce droit.",
+    c:"Le texte montre que les Françaises votaient depuis 1848, quand le suffrage universel a été instauré.",
+    d:"La présence de sa mère de soixante-dix ans montre que le vote était devenu obligatoire pour toutes les femmes, quel que soit leur âge ou leur état de santé."
+  },
+  correct:"b", key:"contexte",
+  avant:"Lu seul, on se demande pourquoi un simple vote fait trembler les mains et pleurer une mère.",
+  apres:"Nous sommes en avril 1945 : c'est le tout premier vote des Françaises.",
+  expl:"Sans la date, le texte reste mystérieux. Le contexte lui donne tout son sens : en 1848, le suffrage « universel » n'était que masculin, et les femmes ont dû attendre près d'un siècle de plus. La mère de 70 ans a vécu toute sa vie sans ce droit. Le journal intime, écrit pour soi, est une source fiable sur cette émotion."
+},
+{
+  id:"auclert", titre:"L'urne renversée", theme:"Les femmes et le vote, 1908", kind:"Texte",
+  docs:[{style:"type", cote:"Rapport dactylographié (texte reconstitué)",
+    texte:`Monsieur le Préfet,
+
+Ce jour, vers deux heures, une femme d'une soixantaine d'années, la nommée Hubertine Auclert, a pénétré dans le bureau de vote de la rue des Blancs-Manteaux. Avant que les agents aient pu intervenir, elle s'est emparée de l'urne et l'a jetée à terre en criant que « les femmes aussi paient l'impôt ».
+
+Cette exaltée, bien connue de nos services pour ses idées extravagantes, a été conduite au poste. Le calme a été aussitôt rétabli.`,
+    tags:{
+      nature:"Rapport de police administratif.",
+      auteur:"Le commissaire du quartier, chargé de maintenir l'ordre pendant le scrutin.",
+      contexte:"3 mai 1908, élections municipales à Paris. Les femmes n'ont pas le droit de vote. Hubertine Auclert (1848-1914) milite depuis trente ans pour le suffrage des femmes ; ce jour-là, elle renverse réellement une urne.",
+      destinataire:"Le préfet de police, son supérieur."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"Le rapport, précis et officiel, montre qu'Hubertine Auclert était une femme exaltée, sans véritables idées politiques.",
+    b:"Il rapporte un geste militant pour le vote des femmes, vu par un policier hostile.",
+    c:"On y apprend qu'en 1908, les femmes votaient aux municipales mais pas encore aux élections nationales.",
+    d:"Un rapport de police est officiel : il faut reprendre ses mots et ses jugements sans les discuter."
+  },
+  correct:"b", key:"auteur",
+  avant:"Lu seul, le texte décrit une femme « exaltée » qui trouble l'ordre public.",
+  apres:"C'est un policier qui écrit, pour qui toute militante qui dérange l'ordre est une « exaltée ».",
+  expl:"L'auteur donne le point de vue : pour un commissaire, l'important est l'ordre, et les « idées extravagantes » sont celles d'une militante reconnue, qui réclame un droit que les femmes obtiendront en 1944. Le rapport est précieux pour connaître les faits (le lieu, l'heure, le geste), mais ses jugements disent surtout comment les autorités voyaient les suffragistes."
+},
+{
+  id:"eylau", titre:"Le bulletin de victoire", theme:"Premier Empire, 1807", kind:"Texte",
+  docs:[{style:"press", cote:"Bulletin imprimé (texte reconstitué)", head:"BULLETIN DE LA GRANDE ARMÉE",
+    texte:`L'armée française vient de remporter une victoire éclatante. Malgré la neige et le froid, nos soldats ont enfoncé les lignes ennemies, qui ont fui en abandonnant leurs canons et leurs blessés.
+
+Nos pertes sont légères. L'Empereur a passé la nuit au milieu de ses troupes, partageant leurs fatigues. L'enthousiasme de l'armée est à son comble.`,
+    tags:{
+      nature:"Bulletin officiel de l'armée, imprimé, lu en public et affiché dans toute la France.",
+      auteur:"Napoléon Ier lui-même, qui dicte et corrige ses bulletins. On disait alors « menteur comme un bulletin ».",
+      contexte:"Février 1807, bataille d'Eylau, en Prusse orientale, contre les Russes : l'une des plus meurtrières de l'Empire, sous la neige, sans vainqueur net. Les deux camps perdent des dizaines de milliers d'hommes, tués ou blessés.",
+      destinataire:"Les Français, qui apprennent les nouvelles de la guerre par ces bulletins."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"Le bulletin officiel montre qu'Eylau a été une victoire facile et peu coûteuse pour l'armée française.",
+    b:"Écrit par Napoléon lui-même, il construit sa légende de chef victorieux : c'est une source sur sa propagande.",
+    c:"Le texte, trop beau pour être vrai, prouve que Napoléon a perdu la bataille et s'est enfui.",
+    d:"Le bulletin montre que les soldats de 1807 se battaient dans un enthousiasme total, malgré la neige, le froid et la fatigue, entraînés par un empereur proche d'eux."
+  },
+  correct:"b", key:"auteur",
+  avant:"Lu seul, le texte annonce une belle victoire peu coûteuse.",
+  apres:"C'est Napoléon qui écrit son propre bulletin de victoire, après un carnage sans vainqueur net.",
+  expl:"Quand l'auteur est aussi le principal acteur, il a tout intérêt à embellir. Napoléon soigne sa légende : la victoire « éclatante », les pertes « légères », l'Empereur partageant les fatigues de ses hommes. Le bulletin est une source essentielle sur la propagande impériale ; pour la bataille elle-même, il faut d'autres sources, comme les témoignages de soldats."
+},
+{
+  id:"louis14", titre:"Le roi en majesté", theme:"Monarchie absolue, 1701", kind:"Tableau",
+  docs:[{style:"img", poster:true, src:"louis14", cote:"Huile sur toile, 2,77 × 1,94 m", credit:"Hyacinthe Rigaud, 1701. Musée du Louvre, via Wikimedia Commons. Domaine public.",
+    legende:"Un roi en pied, perruque et manteau bleu brodé de fleurs de lys doublé d'hermine, épée au côté, la main posée sur un sceptre. Une couronne est posée sur un coussin. Le visage est celui d'un homme âgé ; les jambes, en bas de soie blanche, sont celles d'un danseur.",
+    tags:{
+      nature:"Portrait d'apparat peint à l'huile, de très grande taille.",
+      auteur:"Hyacinthe Rigaud, peintre officiel de la cour, payé par le roi. Le roi contrôle soigneusement son image.",
+      contexte:"1701 : Louis XIV a 63 ans et règne en monarque absolu depuis 1661.",
+      destinataire:"La cour et les visiteurs de marque : le tableau est exposé à Versailles."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"Le tableau montre qu'à 63 ans, Louis XIV avait gardé un corps jeune et des jambes de danseur.",
+    b:"Peint sur commande par l'artiste officiel, il met en scène la puissance du roi : c'est l'image qu'il veut donner de lui.",
+    c:"On y voit le costume que le roi portait chaque jour à Versailles, avec la couronne et le sceptre.",
+    d:"Très réaliste dans ses moindres détails (dentelles, hermine, plis du manteau), ce tableau est si précis qu'on peut le considérer comme une photographie du roi."
+  },
+  correct:"b", key:"auteur",
+  avant:"Vu seul, le tableau semble montrer le roi tel qu'il était, dans sa tenue habituelle.",
+  apres:"C'est un peintre payé par le roi qui le représente, avec tous les symboles de son pouvoir.",
+  expl:"L'auteur travaille pour son modèle : il doit montrer la majesté royale. D'où les insignes du sacre (sceptre, épée, couronne, manteau fleurdelisé) et ces jambes jeunes, qui rappellent que le roi aimait danser, sous un visage de vieil homme. Le portrait ne dit pas à quoi ressemblait Louis XIV au quotidien ; il dit comment la monarchie absolue voulait être vue."
+},
+{
+  id:"germinal", titre:"La descente au fond", theme:"Industrialisation, XIXe siècle", kind:"Texte",
+  docs:[{style:"type", cote:"Extrait de livre (adapté)",
+    texte:`La cage tomba comme une pierre dans le noir. Étienne sentit l'eau ruisseler sur sa nuque ; autour de lui, les herscheuses, des gamines de quinze ans, riaient de sa peur.
+
+Au fond, dans la chaleur étouffante, Maheu creusait la veine couché sur le flanc, le pic au bout des bras, sans pouvoir lever la tête. Le charbon lui tombait dans les yeux. On ne parlait plus : on tapait, on tapait, pour gagner le pain du soir.`,
+    tags:{
+      nature:"Roman : une œuvre de fiction. Étienne et Maheu sont des personnages inventés.",
+      auteur:"Émile Zola, écrivain naturaliste. En 1884, il a enquêté dans les mines du Nord, descendu dans un puits et rempli des carnets d'observations.",
+      contexte:"Germinal est publié en 1884-1885, à l'époque de grandes grèves de mineurs, comme celle d'Anzin en 1884.",
+      destinataire:"Le grand public : le roman paraît d'abord en feuilleton dans un journal, avant d'être publié en livre."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"Le texte décrit avec précision des faits réellement arrivés à deux mineurs du Nord, Étienne et Maheu.",
+    b:"C'est une fiction, mais documentée : elle montre ce que Zola a observé dans les mines, pas des faits précis.",
+    c:"Le texte montre que les mines n'employaient que des hommes adultes.",
+    d:"Un roman est une œuvre d'imagination : il ne peut jamais servir de source à l'historien, même documenté."
+  },
+  correct:"b", key:"nature",
+  avant:"Lu seul, le texte ressemble au témoignage d'un mineur.",
+  apres:"C'est un roman : les personnages sont inventés, mais le décor a été enquêté sur le terrain.",
+  expl:"La nature change ce qu'on peut affirmer : on ne peut pas dire « Maheu a vécu ceci », puisqu'il n'a pas existé. Mais Zola a travaillé comme un enquêteur : la chaleur, la position couchée, le travail des jeunes filles (les herscheuses) correspondent à ce qu'il a vu. Un roman est une source sur une époque et sur le regard qu'on portait sur elle, à condition de le croiser avec d'autres documents."
+},
+{
+  id:"liberte", titre:"La femme au drapeau", theme:"Révolution de 1830", kind:"Tableau",
+  docs:[{style:"img", src:"liberte", cote:"Huile sur toile, 2,60 × 3,25 m", credit:"Eugène Delacroix, 1830. Musée du Louvre, via Wikimedia Commons. Domaine public.",
+    legende:"Une femme pieds nus, la poitrine découverte, coiffée d'un bonnet rouge, brandit le drapeau tricolore et un fusil au-dessus d'une barricade. Autour d'elle, un ouvrier, un bourgeois en chapeau haut-de-forme, un gamin armé de pistolets. À ses pieds, des morts. Au loin, les tours de Notre-Dame dans la fumée.",
+    tags:{
+      nature:"Tableau peint à l'huile, et allégorie : la femme au drapeau représente une idée, la Liberté, pas une personne réelle.",
+      auteur:"Eugène Delacroix, peintre romantique. Il a vu les combats mais n'y a pas pris part.",
+      contexte:"Peint à l'automne 1830, quelques mois après les « Trois Glorieuses » (27-29 juillet 1830), révolution parisienne qui renverse le roi Charles X.",
+      destinataire:"Le public du Salon de 1831, grande exposition de peinture. L'État achète le tableau."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"Le tableau montre qu'en 1830, une femme au drapeau a réellement mené les insurgés sur les barricades de Paris.",
+    b:"C'est une allégorie qui glorifie 1830 : elle dit les idées et les émotions de l'époque, pas une scène vue.",
+    c:"Le bonnet rouge et le drapeau tricolore le prouvent : on assiste à la prise de la Bastille en 1789.",
+    d:"Une peinture exprime les émotions d'un artiste : elle ne peut rien apprendre sur l'histoire politique."
+  },
+  correct:"b", key:"nature",
+  avant:"Vue seule, l'image semble montrer un épisode réel de combat de rue.",
+  apres:"C'est une allégorie : la Liberté, en personne, entraîne le peuple uni.",
+  expl:"Reconnaître la nature du tableau évite le contresens : aucune femme à demi nue n'a mené la foule. Delacroix incarne une idée, la Liberté, et montre le peuple uni (ouvrier, bourgeois, enfant). Le tableau ne dit pas comment s'est déroulé le combat ; il dit comment on a voulu se souvenir de la révolution de 1830. Le bonnet rouge, venu de la Révolution de 1789, est aussi un piège pour la date."
+},
+{
+  id:"placard", titre:"Fraternité ou la mort", theme:"Révolution française, 1793", kind:"Inscription",
+  docs:[{style:"press", cote:"Inscription murale (transcription)", head:"UNITÉ, INDIVISIBILITÉ DE LA RÉPUBLIQUE",
+    texte:`LIBERTÉ
+ÉGALITÉ
+FRATERNITÉ
+OU LA MORT`,
+    tags:{
+      nature:"Inscription officielle peinte sur les façades des bâtiments publics, et reprise sur des affiches.",
+      auteur:"Les autorités révolutionnaires. En 1793, la Commune de Paris fait inscrire cette devise sur les façades des édifices publics.",
+      contexte:"1793-1794, la Terreur. La République est en guerre contre l'Europe et contre l'insurrection de Vendée ; les « suspects » sont arrêtés et des milliers de personnes sont guillotinées.",
+      destinataire:"Tous les habitants, qui passent chaque jour devant."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"L'inscription montre que la devise républicaine a toujours été une promesse de bonheur et de paix entre citoyens.",
+    b:"Pendant la Terreur, « ou la mort » sonne comme une menace contre ceux que l'on juge ennemis de la République.",
+    c:"Elle montre qu'en 1793, les révolutionnaires cherchaient surtout à réconcilier tous les Français.",
+    d:"L'inscription montre que la devise « Liberté, égalité, fraternité » a été créée sous la Ve République."
+  },
+  correct:"b", key:"contexte",
+  avant:"Lue seule, l'inscription semble proclamer les valeurs de la République que l'on connaît aujourd'hui.",
+  apres:"Elle est peinte sur les murs pendant la Terreur, quand être jugé « suspect » peut mener à la guillotine.",
+  expl:"Sans le contexte, on lit la devise d'aujourd'hui. En 1793, « ou la mort » peut s'entendre de deux façons : mourir pour défendre la République, ou menace contre ceux qui ne l'acceptent pas. Dans une République en guerre qui pourchasse les suspects, les deux sens se mêlent. La formule « ou la mort » disparaît ensuite ; la devise « Liberté, Égalité, Fraternité » n'est officialisée qu'en 1848, puis sous la IIIe République."
+},
+{
+  id:"mur", titre:"Deux sourires", theme:"Fin de la guerre froide, 1989", kind:"Photographie",
+  docs:[{style:"img", src:"mur", cote:"Photographie couleur", credit:"Sergent F. Lee Corkran, photographe de l'armée américaine, 14 novembre 1989. Wikimedia Commons, domaine public.",
+    legende:"Deux hommes en uniforme militaire, l'un souriant, posent en hauteur devant une grande sculpture : un char tiré par des chevaux et surmonté d'une déesse ailée.",
+    tags:{
+      nature:"Photographie prise sur le vif.",
+      auteur:"Un photographe de l'armée américaine, présent à Berlin.",
+      contexte:"14 novembre 1989, sur le mur de Berlin, devant la porte de Brandebourg. Cinq jours plus tôt, le 9 novembre, le régime est-allemand a ouvert le Mur, construit en 1961. Ces gardes-frontières de RDA avaient jusque-là l'ordre d'empêcher tout passage vers l'Ouest, au besoin en tirant.",
+      destinataire:"Le service photographique du ministère américain de la Défense, qui documente l'événement."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"Deux soldats posent fièrement devant un monument, sans doute avant un défilé militaire.",
+    b:"Des gardes du Mur sourient à un photographe américain, l'ennemi d'hier : la fin de la guerre froide s'annonce.",
+    c:"Les uniformes et le monument montrent des soldats allemands à Berlin à la fin de la Seconde Guerre mondiale.",
+    d:"La photo montre des gardes-frontières en train de surveiller la construction du mur de Berlin."
+  },
+  correct:"b", key:"contexte",
+  avant:"Vue seule, la photo montre deux militaires souriants devant un monument : rien d'étonnant.",
+  apres:"Ce sont des gardes du Mur, cinq jours après son ouverture, souriant à un militaire du camp d'en face.",
+  expl:"Le contexte transforme une photo banale en image historique. Pendant vingt-huit ans, ces gardes-frontières ont surveillé le Mur, et plus d'une centaine de personnes y ont été tuées en tentant de passer. Qu'ils sourient à un soldat américain, l'adversaire de la guerre froide, montre que le monde vient de changer. L'Allemagne est réunifiée en 1990 et l'URSS disparaît en 1991."
+},
+{
+  id:"charlemagne", fake:true, titre:"Breaking news de l'an 800", theme:"Empire carolingien, an 800", kind:"Capture d'écran",
+  docs:[{style:"post", cote:"Capture d'écran", post:{nom:"Charlemagne", pseudo:"@Charlemagne_officiel", date:"25 déc. 800",
+      texte:"Couronné empereur à Rome ce matin 👑🙏 Merci au pape Léon III pour l'invitation !! Prochaine étape : inventer l'école 📚😎 Pas sûr que les élèves me remercient… #empereur #Noël #AixLaChapelle",
+      stats:"1 200 ♥ · 340 partages · 87 commentaires"},
+    tags:{
+      nature:"Publication sur un réseau social, conservée sous forme de capture d'écran.",
+      auteur:"Un compte parodique créé en 2021 par un internaute anonyme. La coche « certifié » peut s'acheter.",
+      contexte:"Charlemagne est bien couronné empereur à Rome par le pape Léon III, le 25 décembre 800. Mais Internet n'existe que depuis la fin du XXe siècle. Et Charlemagne n'a pas « inventé l'école » : il a encouragé les écoles des monastères et des cathédrales.",
+      destinataire:"Les abonnés du compte, qui le suivent pour rire."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"Le message montre que Charlemagne annonçait lui-même ses grandes décisions à ses sujets, comme son couronnement par le pape à Rome.",
+    b:"C'est une parodie moderne : elle renseigne sur l'humour d'aujourd'hui, pas sur l'an 800.",
+    c:"On y apprend un fait peu connu : le pape Léon III aurait couronné Charlemagne par erreur.",
+    d:"Le document confirme ce qu'on apprend souvent : c'est bien Charlemagne qui a inventé l'école."
+  },
+  correct:"b", key:["nature","contexte","auteur"],
+  avant:"Vu seul, le message mêle un vrai événement (le couronnement de l'an 800) à des emojis et des hashtags.",
+  apres:"Un réseau social en l'an 800, un compte créé en 2021 : la nature, l'auteur et le contexte ne peuvent pas aller ensemble.",
+  expl:"Les sceaux démasquent le faux : un document ne peut pas appartenir à une époque où son support n'existait pas. C'est un anachronisme, et c'est souvent ainsi qu'on repère un faux. Attention : le faux contient un vrai fait (le couronnement, le pape Léon III, la date) pour paraître crédible. Même un faux est une source… sur ceux qui l'ont fabriqué, ici des internautes d'aujourd'hui qui jouent avec le mythe scolaire de Charlemagne « inventeur de l'école ». Ici, la nature, le contexte ou l'auteur suffisaient chacun à le démasquer : les trois réponses rapportent les points."
+},
+{
+  id:"duo1936", duo:true, titre:"Face-à-face : la même grève", theme:"Front populaire, 1936", kind:"Deux textes",
+  help:"Deux journaux racontent le même jour la même usine occupée. Compare les fiches.",
+  docs:[
+    {style:"press", cote:"Pièce A", head:"LA FÊTE DANS L'USINE",
+     texte:`Dans l'usine occupée, l'ordre est parfait. Les grévistes entretiennent les machines avec soin ; le soir, on danse au son de l'accordéon et les familles apportent la soupe.
+
+Pour la première fois, la classe ouvrière relève la tête. Elle ne demande que justice : des congés, de meilleurs salaires, le respect.`,
+     tags:{nature:"Article de presse.",auteur:"Un journaliste d'un quotidien communiste, qui soutient le Front populaire et les grévistes.",contexte:"Juin 1936. Après la victoire électorale du Front populaire, des grèves avec occupations d'usines s'étendent à toute la France. Les accords de Matignon (7 juin) accordent hausses de salaires et conventions collectives ; suivent les congés payés et la semaine de 40 heures.",destinataire:"Des lecteurs ouvriers et militants."}},
+    {style:"press", cote:"Pièce B", head:"L'ANARCHIE À L'USINE",
+     texte:`Des meneurs ont pris possession illégalement des ateliers. Le propriétaire n'a plus le droit d'entrer chez lui ; la propriété est bafouée.
+
+Pendant que l'on chante l'Internationale, les commandes s'accumulent et les clients s'en vont. Est-ce la révolution qui s'installe en France ?`,
+     tags:{nature:"Article de presse.",auteur:"Un journaliste d'un grand quotidien conservateur, opposé au Front populaire.",contexte:"Juin 1936, les mêmes jours.",destinataire:"Des lecteurs plutôt bourgeois : patrons, commerçants, professions libérales."}}
+  ],
+  question:"Que faire de ces deux articles ?",
+  options:{
+    a:"Croire l'article A : écrit par des journalistes proches des ouvriers, il décrit l'usine de l'intérieur.",
+    b:"Croire l'article B : un grand quotidien national est forcément mieux informé.",
+    c:"Les confronter : ce qui est commun aux deux récits (usine occupée, calme) est le plus sûr.",
+    d:"Les écarter tous les deux : des journaux engagés ne peuvent rien apprendre de fiable sur une grève."
+  },
+  correct:"c", key:"auteur",
+  avant:"Même usine, même jour : une fête ouvrière d'un côté, une menace de révolution de l'autre.",
+  apres:"L'un écrit pour la gauche qui soutient les grévistes, l'autre pour la droite qui les redoute.",
+  expl:"L'auteur et son engagement politique expliquent l'écart : les mêmes faits (des ouvriers qui occupent l'usine sans violence) deviennent « fête » ou « anarchie ». En croisant les deux, on dégage ce qui est commun aux deux récits et on comprend la peur des uns et l'espoir des autres, qui font aussi partie de l'histoire de 1936."
+},
+{
+  id:"duo1916", duo:true, titre:"Face-à-face : le même soldat", theme:"Première Guerre mondiale", kind:"Deux textes",
+  help:"Les deux pages viennent du même carnet, tenu par le même homme. Compare les dates.",
+  docs:[
+    {style:"hand", cote:"Pièce A",
+     texte:`On part ! Toute la gare chantait. Le sergent dit qu'on sera à Berlin pour les vendanges.
+
+Je rapporterai un casque à pointe pour le petit. Marie a pleuré, mais elle était fière.`,
+     tags:{nature:"Carnet personnel.",auteur:"Henri D., 26 ans, cultivateur dans la Drôme, soldat d'infanterie.",contexte:"5 août 1914, départ pour le front, au début de la guerre.",destinataire:"Lui-même."}},
+    {style:"hand", cote:"Pièce B",
+     texte:`Trois jours qu'on ne peut pas enterrer les camarades. La boue monte jusqu'aux genoux.
+
+Personne ici ne croit plus à rien. On attend la relève, ou la bonne blessure qui renvoie à l'arrière.`,
+     tags:{nature:"Carnet personnel.",auteur:"Le même Henri D., 28 ans.",contexte:"Octobre 1916, bataille de la Somme, après deux ans de guerre de tranchées.",destinataire:"Lui-même."}}
+  ],
+  question:"Pourquoi le même homme écrit-il deux textes si différents ?",
+  options:{
+    a:"Henri ment dans l'un des deux textes, puisqu'un même homme ne peut pas penser deux choses opposées.",
+    b:"Deux ans de guerre ont changé son regard : les deux textes sont sincères, chacun à son moment.",
+    c:"Le texte de 1914 prouve que la guerre a été courte, comme l'annonçait le sergent.",
+    d:"Le ton est trop différent : les deux textes ne viennent sûrement pas de la même personne."
+  },
+  correct:"b", key:"contexte",
+  avant:"Même auteur, même carnet : l'enthousiasme d'un côté, le désespoir de l'autre.",
+  apres:"Deux ans de tranchées séparent les deux pages.",
+  expl:"Seul le contexte change, et il explique tout : en août 1914, presque tout le monde croit à une guerre courte ; en 1916, après Verdun et la Somme, les soldats savent ce qu'est la guerre industrielle. Un même témoin peut être sincère deux fois et dire deux choses opposées. Dater précisément un document est donc indispensable."
+},
+{
+  id:"sedan", titre:"Face-à-face : deux récits d'une même journée", theme:"Guerre franco-prussienne, 1870", kind:"Deux textes", duo:true, help:"Les deux pièces sont signées du même officier, le même soir. Compare les fiches.",
+  docs:[
+    {style:"type", cote:"Pièce A",
+     texte:`Rapport à Monsieur le Ministre de la Guerre.
+
+Le 2e bataillon a tenu sa position avec un courage remarquable sous un feu très violent. Sur ordre, il s'est replié en bon ordre vers Sedan sans perdre son drapeau. Les hommes restent pleins d'ardeur et prêts à reprendre le combat.`,
+     tags:{nature:"Rapport militaire officiel.",auteur:"Le commandant du 2e bataillon.",contexte:"31 août 1870, la veille de la bataille de Sedan. Le 2 septembre, l'armée capitule et Napoléon III est fait prisonnier.",destinataire:"Le ministre de la Guerre, son supérieur."}},
+    {style:"hand", cote:"Pièce B",
+     texte:`Ma chère Hélène,
+je t'écris de Sedan où nous nous entassons. Ce matin tout a cédé d'un coup : les hommes ont jeté leurs sacs et nous avons couru jusqu'aux remparts dans une cohue affreuse. Personne n'a mangé depuis deux jours.
+
+Je ne sais pas ce que demain nous réserve. Brûle cette lettre.`,
+     tags:{nature:"Lettre privée.",auteur:"Le même commandant du 2e bataillon.",contexte:"31 août 1870, le même soir.",destinataire:"Son épouse."}}
+  ],
+  question:"Que faire de ces deux documents ?",
+  options:{
+    a:"Garder le rapport : adressé à un ministre, il est forcément plus fiable qu'une lettre écrite dans l'émotion.",
+    b:"Garder la lettre : un document privé, écrit pour une épouse, dit toujours la vérité.",
+    c:"Les confronter : l'écart révèle la déroute réelle et ce que l'officier voulait faire croire à son chef.",
+    d:"Les écarter : deux récits contradictoires du même auteur prouvent qu'aucun des deux n'est fiable."
+  },
+  correct:"c", key:"destinataire",
+  avant:"Même auteur, même jour, même événement… et deux récits opposés.",
+  apres:"Au ministre, le commandant défend sa réputation. À sa femme, il n'a rien à prouver.",
+  expl:"Seul le destinataire change, et c'est lui qui explique l'écart : face à son chef, l'officier transforme une fuite en « repli en bon ordre ». La lettre privée semble plus franche, mais elle n'est pas « la vérité » pour autant : c'est en croisant les deux qu'on comprend à la fois la déroute et la façon dont l'armée la racontait."
+}
+];
+
+const ROUTES = {
+  express:{nom:"Parcours 30 minutes", desc:"6 dossiers tirés au sort : un par sceau, un document piège et un face-à-face.", per:1, imgs:2},
+  complet:{nom:"Parcours complet", desc:"10 dossiers tirés au sort : deux par sceau, un document piège et un face-à-face. Environ 50 minutes.", per:2, imgs:4}
+};
+const keysOf = c => [].concat(c.key);
+const isImg = c => c.docs[0].style==="img";
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
+function loadSeen(){ try{ return new Set(JSON.parse(localStorage.getItem("atelier-vus")||"[]")); }catch(e){ return new Set(); } }
+function saveSeen(set){ try{ localStorage.setItem("atelier-vus", JSON.stringify([...set])); }catch(e){} }
+function draw(route){
+  const R0 = ROUTES[route]; let seen = loadSeen();
+  const main = CASES.filter(c=>!c.duo && !c.fake);
+  const fresh = pool => { const f = pool.filter(c=>!seen.has(c.id)); return shuffle(f).concat(shuffle(pool.filter(c=>seen.has(c.id)))); };
+  let best=null, bestImg=-1;
+  for(let t=0;t<40;t++){
+    let pick=[];
+    ORDER.forEach(k=>{ const pool=main.filter(c=>c.key===k); pick.push(...fresh(pool).slice(0,R0.per)); });
+    const n = pick.filter(isImg).length;
+    if(n>bestImg){best=pick;bestImg=n;} if(n>=R0.imgs) break;
+  }
+  const fake = shuffle(CASES.filter(c=>c.fake))[0];
+  const duo = fresh(CASES.filter(c=>c.duo))[0];
+  const ordered = shuffle(best);
+  ordered.splice(1+Math.floor(Math.random()*(ordered.length-1)),0,fake);
+  const chosen = [...ordered, duo];
+  chosen.forEach(c=>seen.add(c.id));
+  if(main.every(c=>seen.has(c.id))) seen = new Set(chosen.map(c=>c.id));
+  saveSeen(seen);
+  return chosen.map(c=>CASES.indexOf(c));
+}
+
+const METHOD = {
+  nature:"Lettre, rapport, journal intime, article, photo, caricature, affiche, statue ? Public ou privé, libre ou censuré ? La nature dit ce que le document peut montrer.",
+  auteur:"Qui l'a écrit, dessiné, photographié ou commandé ? Depuis quelle place, avec quels intérêts ? L'auteur donne le point de vue, et parfois les raisons de déformer.",
+  contexte:"Quand, où, que se passe-t-il alors, et que sait-on de la suite ? Le contexte donne le sens du document et rappelle ce qu'il ne montre pas.",
+  destinataire:"À qui s'adresse-t-on, pour obtenir quoi ? Le destinataire explique ce qu'on dit, ce qu'on tait, ce qu'on embellit."
+};
+
+/* ---------- niveaux de maîtrise ---------- */
+const RANKS = [
+  {min:0,   nom:"Petite souris des archives", txt:"Tu grignotes tes premiers cartons."},
+  {min:.2,  nom:"Taupe des réserves",        txt:"Tu creuses sous la surface des documents."},
+  {min:.4,  nom:"Fine loupe",                txt:"Plus aucun détail de la fiche ne t'échappe."},
+  {min:.6,  nom:"Œil de lynx",               txt:"Tu repères les pièges avant d'y tomber."},
+  {min:.8,  nom:"Sphinx des sources",        txt:"Les documents te livrent leurs secrets."},
+  {min:.95, nom:"Légende des archives",      txt:"Ton nom sera gravé sur les rayonnages."}
+];
+const rankIdx = (score, max) => { let r=0; RANKS.forEach((k,i)=>{ if(score >= Math.ceil(k.min*max)) r=i; }); return r; };
+const rankBadge = () => { const i=rankIdx(S.score,maxScore()); return `<span class="rank" title="Niveau de maîtrise"><span class="lv">${i+1}</span>${RANKS[i].nom}</span>`; };
+
+/* ---------- état ---------- */
+const fresh = () => ({list:[], streak:0, levelUp:null, screen:"intro", route:"express", pos:0, step:"blind", first:null, second:null, keyPick:null, opened:[], fresh:null, score:0, changed:0, results:[]});
+let S = fresh();
+const $app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const list = () => S.list;
+const cur = () => CASES[list()[S.pos]];
+const maxScore = () => list().length*5;
+const nMain = () => list().filter(i=>!CASES[i].duo).length;
+
+function startCase(pos){
+  const c = CASES[list()[pos]];
+  Object.assign(S, {order: shuffle(Object.keys(c.options)), screen:"case", pos, first:null, second:null, keyPick:null, fresh:null,
+       step: c.duo ? "second" : "blind", opened: c.duo ? [...ORDER] : []});
+  render(); scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ---------- rendu ---------- */
+function header(){
+  const chips = S.screen==="intro" ? "" : list().map((i,k)=>{
+    const cls = S.screen==="case" && k===S.pos ? "on" : (S.results[k] ? "done" : "");
+    return `<span class="chip ${cls}">${CASES[i].duo ? "Duel" : CASES[i].fake ? "?" : k+1}</span>`;
+  }).join("");
+  return `<header class="top">
+    <div class="brand"><i></i>L'Atelier des archives</div>
+    <div class="track">${chips}</div>
+    ${S.screen==="intro" ? "" : `<div class="row">${rankBadge()}<div class="score">Score <b>${S.score}</b> / ${maxScore()}</div></div>`}
+  </header>`;
+}
+
+function intro(){
+  const demo = ORDER.map(k=>`<div class="seal"><div class="wax"><b>${TAGS[k].l}</b></div><span class="n">${TAGS[k].nom}</span></div>`).join("");
+  const routes = Object.entries(ROUTES).map(([k,r])=>`<button class="route ${k==="express"?"main":""}" data-route="${k}"><b>${r.nom}</b><span>${r.desc}</span></button>`).join("");
+  return `${header()}
+  <section class="hero">
+    <div style="display:grid;gap:18px">
+      <h1>Un document<br>ne parle <span>jamais seul</span></h1>
+      <p class="lead">Aux archives, historiennes et historiens ne se contentent pas de lire un texte ou de regarder une image : ils et elles cherchent d'abord à savoir ce qu'est le document, qui l'a produit, quand, et pour qui.</p>
+      <p class="lead">C'est maintenant ton enquête. Dans chaque dossier, l'identité du document est cachée sous quatre sceaux de cire. Lettre, photo, affiche, caricature ou statue : lis ou observe-le d'abord sans rien savoir, puis brise les sceaux. Ta lecture va-t-elle changer ?</p>
+      <div class="routes">${routes}</div>
+    </div>
+    <div style="display:grid;gap:14px">
+      <ol class="rules">
+        <li><span><b>Première impression.</b> Lis ou observe le document seul et choisis ce qu'il t'apprend. Pas de points à cette étape.</span></li>
+        <li><span><b>Brise les quatre sceaux.</b> Chacun révèle une information sur le document.</span></li>
+        <li><span><b>Seconde lecture.</b> Réponds à nouveau : <span class="pts">+3 points</span> si ta conclusion est juste.</span></li>
+        <li><span><b>Quel sceau a tout changé ?</b> Désigne l'information décisive : <span class="pts">+2 points</span>.</span></li>
+      </ol>
+      <div class="seals-demo">${demo}</div>
+      <div style="display:grid;gap:8px;margin-top:6px">
+        <div class="step">Six niveaux de maîtrise à gagner</div>
+        <ol class="ladder">${RANKS.map((r,i)=>`<li class="${i===0?"got":""}"><span class="lv">${i+1}</span><span><b>${r.nom}</b></span></li>`).join("")}</ol>
+      </div>
+    </div>
+  </section>
+`;
+}
+
+function docSheet(d, opened){
+  let body;
+  if(d.style==="img"){
+    const pic = d.src ? `<img src="${IMG[d.src]}" alt="${esc(d.legende)}" loading="lazy">` : d.svg();
+    body = `<figure class="fig ${d.poster?"poster":""}">${pic}<figcaption><b>Ce que l'on voit</b>${esc(d.legende)}${d.credit?`<span class="credit">${esc(d.credit)}</span>`:""}</figcaption></figure>`;
+  } else if(d.style==="post"){
+    const q=d.post;
+    body = `<div class="post"><div class="post-h"><span class="ava">C</span><div><b>${esc(q.nom)} <span class="tick" aria-label="certifié">✔</span></b><small>${esc(q.pseudo)} · ${esc(q.date)}</small></div></div><p>${esc(q.texte)}</p><small class="post-s">${esc(q.stats)}</small></div>`;
+  } else {
+    const t = d.style==="press" ? `<span class="head">${esc(d.head)}</span>${esc(d.texte)}` : esc(d.texte);
+    body = `<div class="text ${d.style}">${t}</div>`;
+  }
+  const fields = ORDER.map(k=>{
+    const show = opened.includes(k);
+    return `<div class="field ${S.fresh===k?'fresh':''}"><small>${TAGS[k].nom}</small>${show?`<p>${esc(d.tags[k])}</p>`:`<span class="blank" aria-label="Scellé"></span>`}</div>`;
+  }).join("");
+  return `<article class="sheet">
+    <div class="cote"><span>${esc(d.cote)}</span><span>${d.src?"Document d'archives":d.style==="img"?"Image reconstituée":"Document reconstitué"}</span></div>
+    ${body}
+    <div class="card">${fields}</div>
+  </article>`;
+}
+
+const L = k => "ABCD"[S.order.indexOf(k)] || "?";
+function opts(c, picked, lockedResult){
+  if(!S.order || S.order.length!==Object.keys(c.options).length) S.order = shuffle(Object.keys(c.options));
+  return `<div class="opts">${S.order.map(k=>{ const v=c.options[k];
+    let cls = "";
+    if(lockedResult){ if(k===c.correct) cls="good"; else if(k===picked) cls="bad"; }
+    else if(k===picked) cls="sel";
+    if(S.step!=="blind" && !c.duo && k===S.first && !lockedResult) cls += " was";
+    return `<button class="opt ${cls}" data-opt="${k}" ${lockedResult?"disabled":""}><span class="l">${L(k)}</span><span>${esc(v)}</span></button>`;
+  }).join("")}</div>`;
+}
+
+function panel(){
+  const c = cur();
+  const n = c.duo ? "Face-à-face" : `Dossier ${S.pos+1} sur ${nMain()}`;
+  const isImg = c.docs[0].style==="img";
+  if(S.step==="blind") return `
+    <div class="step">${n} · Étape 1 · Première impression</div>
+    <h2>${esc(c.question)}</h2>
+    <p class="help">Tu ne sais rien de ce document à part ce que tu ${isImg?"vois":"lis"}. Fie-toi à ta première impression.</p>
+    ${opts(c, S.first)}
+    <button class="btn" data-go="toReveal" ${S.first?"":"disabled"}>Valider ma première impression</button>`;
+
+  if(S.step==="reveal"){
+    const seals = ORDER.map(k=>{
+      const o = S.opened.includes(k);
+      return `<button class="seal ${o?"open":""}" data-seal="${k}" ${o?"disabled":""} aria-label="Briser le sceau ${TAGS[k].nom}"><div class="wax"><b>${TAGS[k].l}</b></div><span class="n">${TAGS[k].nom}</span></button>`;
+    }).join("");
+    const left = 4 - S.opened.length;
+    return `
+    <div class="step">${n} · Étape 2 · Briser les sceaux</div>
+    <h2>Découvre l'identité du document</h2>
+    <p class="help">Clique sur chaque sceau, dans l'ordre que tu veux. Les informations s'inscrivent sur la fiche sous le document.</p>
+    <div class="seals">${seals}</div>
+    <button class="btn" data-go="toSecond" ${left?"disabled":""}>${left?`Encore ${left} sceau${left>1?"x":""} à briser`:"Revenir au document"}</button>`;
+  }
+
+  if(S.step==="second") return `
+    <div class="step">${n} · ${c.duo?"Étape 1 · Confronter":"Étape 3 · Seconde lecture"}</div>
+    <h2>${esc(c.question)}</h2>
+    <p class="help">${c.duo ? esc(c.help) : "Maintenant que tu connais l'identité du document, garde ta réponse ou change-la."}</p>
+    ${opts(c, S.second)}
+    <button class="btn" data-go="toKey" ${S.second?"":"disabled"}>Valider</button>`;
+
+  if(S.step==="key"){
+    const ok = S.second===c.correct;
+    const keys = ORDER.map(k=>`<button class="opt ${S.keyPick===k?"sel":""}" data-key="${k}"><span class="l">${TAGS[k].l}</span><span><b>${TAGS[k].nom}</b> · ${TAGS[k].q}</span></button>`).join("");
+    return `
+    <div class="step">${n} · ${c.duo?"Étape 2":"Étape 4"} · L'information décisive</div>
+    <div class="verdict ${ok?"ok":"ko"}"><h3>${ok?"Bonne conclusion · <span class='pts'>+3</span>":"Ce n'est pas la meilleure conclusion"}</h3><p>${ok?"Tu as su lire le document avec son identité.":"La bonne réponse est la "+L(c.correct)+". L'explication arrive juste après."}</p></div>
+    <h2>${c.duo ? "Quel élément explique la différence entre les deux récits ?" : "Quel sceau a le plus changé ce que le document peut nous apprendre ?"}</h2>
+    <div class="opts">${keys}</div>
+    <button class="btn" data-go="toDebrief" ${S.keyPick?"":"disabled"}>Voir l'explication</button>`;
+  }
+
+  if(S.step==="debrief"){
+    const r = S.results[S.pos];
+    const last = S.pos===list().length-1;
+    return `
+    <div class="step">${n} · Explication · <span class="pts">${r.pts} / 5 points</span></div>
+    ${S.levelUp!==null ? `<div class="levelup"><span class="stamp">Niveau ${S.levelUp+1}</span><div><b>Tu deviens ${RANKS[S.levelUp].nom} !</b><span>${RANKS[S.levelUp].txt}</span></div></div>` : ""}
+    ${S.streak>=2 ? `<div class="streak">Série parfaite : ${S.streak} dossiers à 5 sur 5 d'affilée</div>` : ""}
+    <h2>${keysOf(c).map(k=>TAGS[k].nom).join(", ")} : ${keysOf(c).length>1?"les sceaux décisifs":"le sceau décisif"}</h2>
+    <div class="ba">
+      <div><small>Sans les sceaux</small>${esc(c.avant)}</div>
+      <div><small>Avec les sceaux</small>${esc(c.apres)}</div>
+    </div>
+    <div class="verdict ${r.keyOk?"ok":"ko"}">
+      <h3>${r.keyOk?"Bien vu · <span class='pts'>+2</span>":"Ton choix : "+TAGS[S.keyPick].nom}</h3>
+      <p>${esc(c.expl)}</p>
+      ${!c.duo ? `<p><b>${S.first===c.correct?"Ta première impression était déjà la bonne : tu as su te méfier du document seul.":"Ta première impression était la "+L(S.first)+". Les sceaux ont changé la valeur du document."}</b></p>`:""}
+    </div>
+    <button class="btn" data-go="${last?"final":"next"}">${last?"Voir mon bilan":"Dossier suivant"}</button>`;
+  }
+}
+
+function caseView(){
+  const c = cur();
+  return `${header()}
+  <div style="display:grid;gap:4px"><div class="row"><span class="kind">${esc(c.kind)}</span><span class="step" style="color:var(--ink-soft)">${esc(c.theme)}</span></div><h2 style="font-stretch:75%;font-weight:800;font-size:clamp(26px,4vw,38px);text-transform:uppercase">${esc(c.titre)}</h2></div>
+  <section class="desk">
+    <div class="docs">${c.docs.map(d=>docSheet(d,S.opened)).join("")}</div>
+    <aside class="panel">${panel()}</aside>
+  </section>`;
+}
+
+function finalView(){
+  const played = list().map(i=>CASES[i]);
+  const cards = ORDER.map(k=>{
+    const where = played.map((c,p)=>keysOf(c).includes(k)?(c.duo?"face-à-face":c.fake?"document piège":"dossier "+(p+1)):null).filter(Boolean);
+    return `<div class="mcard"><div class="wax"><b>${TAGS[k].l}</b></div><div><h3>${TAGS[k].nom} · ${TAGS[k].q}</h3><p>${esc(METHOD[k])}</p>${where.length?`<p class="note">Décisif : ${where.join(", ")}.</p>`:""}</div></div>`;
+  }).join("");
+  const goodFirst = S.results.filter((r,p)=>r && !played[p].duo && r.first===played[p].correct).length;
+  return `${header()}
+  <section class="final">
+    <div class="step">Bilan de l'enquête</div>
+    <h1>Avant d'interroger un document,<br>brise ses quatre sceaux</h1>
+    <div class="bigrank"><span class="stamp">${RANKS[rankIdx(S.score,maxScore())].nom}</span><span class="lead" style="font-size:17px">${RANKS[rankIdx(S.score,maxScore())].txt}</span></div>
+    <div class="stats">
+      <div class="stat"><b>${S.score}<small style="font-size:22px">/${maxScore()}</small></b><span>Points</span></div>
+      <div class="stat"><b>${S.changed}</b><span>Fois où tu as changé d'avis</span></div>
+      <div class="stat"><b>${goodFirst}/${nMain()}</b><span>Bonnes premières impressions</span></div>
+    </div>
+    <p class="moral">Un même texte, une même image n'apprennent pas la même chose selon qui les produit, pour qui, sous quelle forme et à quel moment. Un document qui embellit, exagère ou ment n'est pas inutile : il répond à une autre question.</p>
+    <h2 style="font-stretch:80%;font-weight:800;font-size:24px">Fiche méthode : les quatre questions à poser</h2>
+    <div class="method">${cards}</div>
+    <ol class="ladder" style="max-width:420px">${RANKS.map((r,i)=>`<li class="${i<=rankIdx(S.score,maxScore())?"got":""}"><span class="lv">${i+1}</span><span><b>${r.nom}</b></span><small>${Math.ceil(r.min*maxScore())} pts</small></li>`).join("")}</ol>
+    <div class="row">
+      ${S.route==="express"?`<button class="btn" data-go="complet">Continuer avec le parcours complet</button>`:""}
+      <button class="btn ghost" data-go="again">Rejouer avec d'autres documents</button>
+      <button class="btn ghost" data-go="restart">Revenir à l'accueil</button>
+    </div>
+  </section>`;
+}
+
+function render(){
+  $app.innerHTML = S.screen==="intro" ? intro() : S.screen==="final" ? finalView() : caseView();
+}
+
+/* ---------- interactions ---------- */
+$app.addEventListener("click", e=>{
+  const t = e.target.closest("button"); if(!t || t.disabled) return;
+  const c = S.screen==="case" ? cur() : null;
+  if(t.dataset.route){ const r=t.dataset.route; S=fresh(); S.route=r; S.list=draw(r); return startCase(0); }
+  if(t.dataset.opt){
+    if(S.step==="blind") S.first = t.dataset.opt;
+    else if(S.step==="second") S.second = t.dataset.opt;
+    return render();
+  }
+  if(t.dataset.seal){
+    if(!S.opened.includes(t.dataset.seal)) S.opened.push(t.dataset.seal);
+    S.fresh = t.dataset.seal; return render();
+  }
+  if(t.dataset.key){ S.keyPick = t.dataset.key; return render(); }
+  switch(t.dataset.go){
+    case "toReveal": S.step="reveal"; return render();
+    case "toSecond": S.step="second"; S.fresh=null; return render();
+    case "toKey": S.step="key"; return render();
+    case "toDebrief": {
+      const ansOk = S.second===c.correct, keyOk = keysOf(c).includes(S.keyPick);
+      const pts = (ansOk?3:0)+(keyOk?2:0);
+      const before = rankIdx(S.score, maxScore());
+      S.score += pts;
+      const after = rankIdx(S.score, maxScore());
+      S.levelUp = after>before ? after : null;
+      S.streak = pts===5 ? S.streak+1 : 0;
+      if(!c.duo && S.first!==S.second) S.changed++;
+      S.results[S.pos] = {pts, keyOk, first:S.first, second:S.second};
+      S.step="debrief"; return render();
+    }
+    case "next": return startCase(S.pos+1);
+    case "final": S.screen="final"; render(); return scrollTo({top:0,behavior:"smooth"});
+    case "complet": S=fresh(); S.route="complet"; S.list=draw("complet"); return startCase(0);
+    case "again": { const r=S.route; S=fresh(); S.route=r; S.list=draw(r); return startCase(0); }
+    case "restart": S = fresh(); render(); return scrollTo({top:0,behavior:"smooth"});
+  }
+});
+
+/* conserve la partie si la page est mise à jour pendant le jeu */
+window.claude?.hot?.snapshot?.(()=>S);
+const boot = data => { if(data && data.screen && data.route) S = data; render(); };
+window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
+</script>
+
+</body>
+</html>
