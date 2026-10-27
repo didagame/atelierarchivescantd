@@ -103,6 +103,14 @@ details.prof summary{cursor:pointer;font-weight:700;font-size:14px;letter-spacin
 .route.main{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .route.main span{color:var(--bg);opacity:.8}
 .route.main:hover{background:var(--wax);border-color:var(--wax)}
+/* fausse messagerie */
+.chat{margin:20px auto;max-width:380px;border:1px solid var(--line);border-radius:18px;overflow:hidden;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--paper-2)}
+.chat-h{display:flex;gap:10px;align-items:center;padding:10px 14px;background:var(--paper);border-bottom:1px solid var(--line)}
+.chat-h b{display:block;font-size:15px}.chat-h small{color:var(--ok);font-size:12px}
+.chat-b{display:flex;flex-direction:column;gap:8px;padding:14px}
+.bub{max-width:80%;padding:8px 12px;border-radius:16px;font-size:15.5px;line-height:1.35;background:var(--paper);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
+.bub.me{align-self:flex-end;background:#2f7bf6;color:#fff;border-color:#2f7bf6;border-bottom-left-radius:16px;border-bottom-right-radius:4px}
+.chat-f{padding:8px 14px;font-size:12.5px;color:var(--ink-soft);border-top:1px solid var(--line);background:var(--paper)}
 /* faux post */
 .post{margin:20px;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--paper);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;display:grid;gap:10px}
 .post-h{display:flex;gap:10px;align-items:center}
@@ -714,6 +722,66 @@ OU LA MORT`,
   expl:"Les sceaux démasquent le faux : un document ne peut pas appartenir à une époque où son support n'existait pas. C'est un anachronisme, et c'est souvent ainsi qu'on repère un faux. Attention : le faux contient un vrai fait (le couronnement, le pape Léon III, la date) pour paraître crédible. Même un faux est une source… sur ceux qui l'ont fabriqué, ici des internautes d'aujourd'hui qui jouent avec le mythe scolaire de Charlemagne « inventeur de l'école ». Ici, la nature, le contexte ou l'auteur suffisaient chacun à le démasquer : les trois réponses rapportent les points."
 },
 {
+  id:"brioche", fake:true, titre:"Qu'ils mangent de la brioche", theme:"Révolution française, 1789", kind:"Capture d'écran",
+  docs:[{style:"chat", cote:"Capture d'écran partagée en ligne", chat:{contact:"Louis 👑", sub:"en ligne", vues:"2,3 M de vues · 41 000 partages",
+      msgs:[
+        {me:false,t:"Chérie, le peuple est devant le château. Ils disent qu'ils n'ont plus de pain 😬"},
+        {me:true, t:"Qu'ils mangent de la brioche 🥐💅"},
+        {me:false,t:"Je ne suis pas sûr que ça les calme…"},
+        {me:true, t:"Bon. Et si on partait en week-end à Varennes ? 🧳🌳"},
+        {me:false,t:"Vu ✓✓"}
+      ]},
+    tags:{
+      nature:"Capture d'écran d'une conversation sur une application de messagerie, partagée en 2024 sur les réseaux sociaux.",
+      auteur:"Inconnu : la capture passe de compte en compte, sans source. Une application gratuite permet de fabriquer une fausse conversation en quelques minutes.",
+      contexte:"Octobre 1789 : les Parisiennes marchent sur Versailles pour réclamer du pain, et la famille royale est ramenée à Paris. La fuite à Varennes n'a lieu qu'en juin 1791. Quant à la phrase sur la brioche, on la trouve dans les Confessions de Rousseau, écrites vers 1765, qui l'attribuent à « une grande princesse » : Marie-Antoinette avait alors une dizaine d'années et vivait à Vienne.",
+      destinataire:"Les internautes, qui partagent la capture pour en rire… ou parce qu'ils la croient vraie."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"La conversation prouve que Marie-Antoinette a bien prononcé la célèbre phrase sur la brioche, en répondant au roi.",
+    b:"C'est un faux récent, pour rire : il recycle même une citation déjà douteuse.",
+    c:"Elle montre que le roi et la reine communiquaient en secret pendant la Révolution, à l'insu des révolutionnaires.",
+    d:"Les messages prouvent que la fuite à Varennes a été décidée dès les journées d'octobre 1789."
+  },
+  correct:"b", key:["nature","auteur","contexte"],
+  avant:"Vue seule, la conversation est drôle et reprend une phrase que beaucoup croient prononcée par Marie-Antoinette.",
+  apres:"Une capture sans auteur, partagée en 2024, d'une messagerie qui n'existait pas. Et même la phrase célèbre est une légende.",
+  expl:"Double piège ! La nature et le contexte démasquent l'anachronisme : pas de messagerie en 1789, et Varennes n'a lieu que deux ans plus tard. L'auteur introuvable est aussi un signal d'alerte : une capture d'écran sans source ne prouve rien. Mais ce faux s'appuie sur un faux plus ancien : rien ne prouve que Marie-Antoinette ait jamais parlé de brioche, la phrase circulait avant son arrivée en France. Si elle est restée célèbre, c'est qu'elle correspondait à l'image d'une reine indifférente que diffusaient ses adversaires. Un faux qui marche est souvent un faux qui confirme ce qu'on croit déjà."
+},
+{
+  id:"colomb", fake:true, titre:"Terre en vue !", theme:"Grandes découvertes, 1492", kind:"Journal de bord",
+  docs:[{style:"hand", cote:"Page présentée comme un extrait de journal de bord",
+    texte:`Journal de bord, novembre 1492.
+
+Enfin ! Nous avons atteint l'Amérique. Les marins pleurent de joie. Moi aussi, mais discrètement : je suis l'amiral.
+
+Les habitants nous accueillent avec gentillesse. Je les appelle « Indiens », puisque nous sommes en Inde. Évidemment.
+
+Ils roulent des feuilles séchées et en avalent la fumée. Quelle drôle de mode : cela ne prendra jamais en Europe.
+
+Note pour moi-même : demander une prime à la reine Isabelle. Et une boussole qui marche.
+
+C. Colomb`,
+    tags:{
+      nature:"Texte publié dans un journal de lycée, à la rubrique « Archives imaginaires ». Il imite un journal de bord.",
+      auteur:"Des élèves de seconde, en 2025.",
+      contexte:"Colomb aborde les Bahamas le 12 octobre 1492, puis Cuba. Il meurt en 1506 persuadé d'avoir atteint l'Asie. Le nom « Amérique » n'apparaît qu'en 1507, sur une carte du géographe Martin Waldseemüller, en l'honneur du navigateur Amerigo Vespucci. Le journal de bord original de Colomb est perdu.",
+      destinataire:"Les lectrices et lecteurs du journal du lycée."
+    }}],
+  question:"Que peut-on tirer de ce document ?",
+  options:{
+    a:"Le journal montre que Colomb savait déjà, dès 1492, qu'il avait découvert un nouveau continent : l'Amérique.",
+    b:"C'est un faux pour rire : son auteur sait des choses que Colomb ne pouvait pas savoir en 1492.",
+    c:"Le texte prouve que les Européens ont adopté le tabac dès le retour de Colomb, contrairement à ses prédictions.",
+    d:"Colomb se trompe sur le tabac et sur l'Inde : c'est un mauvais témoin, dont le journal ne vaut rien."
+  },
+  correct:"b", key:["contexte","nature","auteur"],
+  avant:"Vue seule, la page ressemble au journal d'un navigateur, avec quelques remarques étonnantes.",
+  apres:"Le texte emploie un mot inventé quinze ans plus tard et se moque d'une erreur que Colomb ignorait : il a été écrit bien après.",
+  expl:"Le contexte démasque ce faux : Colomb ne pouvait pas écrire « Amérique », un nom inventé en 1507, ni plaisanter sur l'Inde, puisqu'il est mort convaincu d'avoir atteint l'Asie. Tout l'humour repose sur ce que nous savons et que lui ignorait, comme le succès du tabac en Europe. Retiens l'indice : un auteur qui « connaît la suite » écrit après les événements. La nature et l'auteur confirment : c'est un exercice d'élèves de 2025. Le vrai journal de Colomb est perdu ; on le connaît par le résumé qu'en a fait le dominicain Bartolomé de Las Casas."
+},
+{
   id:"duo1936", duo:true, titre:"Face-à-face : la même grève", theme:"Front populaire, 1936", kind:"Deux textes",
   help:"Deux journaux racontent le même jour la même usine occupée. Compare les fiches.",
   docs:[
@@ -797,8 +865,8 @@ Je ne sais pas ce que demain nous réserve. Brûle cette lettre.`,
 ];
 
 const ROUTES = {
-  express:{nom:"Parcours 30 minutes", desc:"6 dossiers tirés au sort : un par sceau, un document piège et un face-à-face.", per:1, imgs:2},
-  complet:{nom:"Parcours complet", desc:"10 dossiers tirés au sort : deux par sceau, un document piège et un face-à-face. Environ 50 minutes.", per:2, imgs:4}
+  express:{nom:"Parcours 30 minutes", desc:"6 dossiers tirés au sort.", per:1, imgs:2},
+  complet:{nom:"Parcours complet", desc:"10 dossiers tirés au sort. Environ 50 minutes.", per:2, imgs:4}
 };
 const keysOf = c => [].concat(c.key);
 const isImg = c => c.docs[0].style==="img";
@@ -909,6 +977,9 @@ function docSheet(d, opened){
   if(d.style==="img"){
     const pic = d.src ? `<img src="${IMG[d.src]}" alt="${esc(d.legende)}" loading="lazy">` : d.svg();
     body = `<figure class="fig ${d.poster?"poster":""}">${pic}<figcaption><b>Ce que l'on voit</b>${esc(d.legende)}${d.credit?`<span class="credit">${esc(d.credit)}</span>`:""}</figcaption></figure>`;
+  } else if(d.style==="chat"){
+    const q=d.chat;
+    body = `<div class="chat"><div class="chat-h"><span class="ava">L</span><div><b>${esc(q.contact)}</b><small>${esc(q.sub)}</small></div></div><div class="chat-b">${q.msgs.map(m=>`<div class="bub ${m.me?"me":""}">${esc(m.t)}</div>`).join("")}</div><div class="chat-f">${esc(q.vues)}</div></div>`;
   } else if(d.style==="post"){
     const q=d.post;
     body = `<div class="post"><div class="post-h"><span class="ava">C</span><div><b>${esc(q.nom)} <span class="tick" aria-label="certifié">✔</span></b><small>${esc(q.pseudo)} · ${esc(q.date)}</small></div></div><p>${esc(q.texte)}</p><small class="post-s">${esc(q.stats)}</small></div>`;
